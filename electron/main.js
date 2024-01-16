@@ -1,5 +1,5 @@
 // electron/main.js
-import { app, BrowserWindow, Menu, screen } from "electron";
+import { app, BrowserWindow, Menu, screen, ipcMain } from "electron";
 import path from "path";
 
 // 是否是生产环境
@@ -27,6 +27,11 @@ const createWindow = () => {
     // 窗口图标。 在 Windows 上推荐使用 ICO 图标来获得最佳的视觉效果, 默认使用可执行文件的图标.
     // 在根目录中新建 build 文件夹存放图标等文件
     icon: path.resolve(app.getAppPath(), 'build', 'icon.ico'),
+    // 使用nodejs
+    webPreferences: {
+      sandbox: false,
+      preload: path.resolve(process.cwd(), './preload.js')
+    }
   });
 
   // 开发环境下，打开开发者工具。
@@ -49,6 +54,11 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
+
+//监听渲染进程
+ipcMain.handle('send-event', (event, msg) => {
+
+})
 
 // 除了 macOS 外，当所有窗口都被关闭的时候退出程序。 因此，通常对程序和它们在任务栏上的图标来说，应当保持活跃状态，直到用户使用 Cmd + Q 退出。
 app.on("window-all-closed", () => {

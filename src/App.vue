@@ -1,13 +1,11 @@
 <script setup>
-import Demo from '../src/views/test/Demo.vue'
+import Index from '../src/views/test/Index.vue'
 </script>
 
 <template>
-    <div class="wrapper">
-      <Demo></Demo>
-    </div>
+  <div>
+    <Index></Index>
+  </div>
 </template>
 
-<style lang="css">
-
-</style>
+<style lang="css"></style>

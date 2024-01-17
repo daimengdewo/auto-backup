@@ -1,9 +1,12 @@
 // electron/main.js
 import { app, BrowserWindow, ipcMain, globalShortcut, Menu } from "electron";
+import path from "path";
 //菜单对象
 import mainMenu from "./resources/mainMenu.js";
 import contextMenu from "./resources/contextMenu.js";
-import path from "path";
+//托盘对象
+import createTray from "./resources/tray.js";
+
 
 // 是否是生产环境
 const isPackaged = app.isPackaged;
@@ -13,7 +16,7 @@ let mainWindow;
 let webContents;
 
 const createWindow = () => {
-  // 创建浏览器窗口
+  // 创建主窗口
   mainWindow = new BrowserWindow({
     show: false,
     // 默认窗口标题，如果由loadURL()加载的HTML文件中含有标签<title>，此属性将被忽略。
@@ -28,7 +31,7 @@ const createWindow = () => {
     minHeight: 600,
     // 窗口图标。 在 Windows 上推荐使用 ICO 图标来获得最佳的视觉效果, 默认使用可执行文件的图标.
     // 在根目录中新建 build 文件夹存放图标等文件
-    icon: path.resolve(process.cwd(), "./build/icon/mainIcon.ico"),
+    icon: path.resolve(process.cwd(), "./build/icon/auto.png"),
     // 使用nodejs
     webPreferences: {
       sandbox: false,
@@ -45,7 +48,8 @@ const createWindow = () => {
 
   // 页面加载完毕后
   mainWindow.once("ready-to-show", () => {
-    mainWindow.show();
+    //创建托盘
+    createTray(app,mainWindow)
     //加载快捷键
     globalShortcut.register('Alt+M', () => {
       console.log('Alt+M 注册成功')
@@ -59,6 +63,8 @@ const createWindow = () => {
     mainWindow.webContents.on('context-menu',event => {
       contextMenu().popup()
     })
+    //显示主窗口
+    mainWindow.show();
   });
 
   // 实例事件
@@ -76,7 +82,6 @@ const createWindow = () => {
 // 在应用准备就绪时调用函数
 app.whenReady().then(() => {
   createWindow();
-
   app.on("activate", () => {
     // macOS
     // 当点击 dock 中的应用程序图标时，如果没有其他

@@ -1,10 +1,11 @@
 <script setup>
-import Index from '../src/views/test/Index.vue'
+import {ref} from "vue";
+import Home from "@/views/Home.vue";
 </script>
 
 <template>
   <div>
-    <Index></Index>
+    <home></home>
   </div>
 </template>
 

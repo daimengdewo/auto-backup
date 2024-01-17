@@ -2,7 +2,7 @@ import { dialog, Menu } from "electron";
 const contextMenu = (args,callBack) => {
     return Menu.buildFromTemplate([
         {
-            label: 'Setting',
+            label: 'Test',
             submenu: [
                 {
                     label: 'Mount-Target', click: () => {

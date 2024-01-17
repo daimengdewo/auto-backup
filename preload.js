@@ -1,9 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 const handleSend = async () => {
-    let fallback = await ipcRenderer.invoke('send-event', 'test')
+    await ipcRenderer.invoke('send-event', 'test')
 }
 
-contextBridge.exposeInIsolatedWorld.exposeInIsolatedWorld('api', {
+contextBridge.exposeInMainWorld('electronAPI', {
     handleSend
 })

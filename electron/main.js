@@ -1,17 +1,16 @@
 // electron/main.js
-import { app, BrowserWindow, ipcMain, webContents } from "electron";
+import { app, BrowserWindow, ipcMain, globalShortcut, Menu } from "electron";
+//菜单对象
+import mainMenu from "./resources/mainMenu.js";
+import contextMenu from "./resources/contextMenu.js";
 import path from "path";
 
 // 是否是生产环境
 const isPackaged = app.isPackaged;
 
-// 禁止显示默认菜单
-// Menu.setApplicationMenu(null);
-
 // 主窗口
 let mainWindow;
-let secondaryWindow;
-let webcontents;
+let webContents;
 
 const createWindow = () => {
   // 创建浏览器窗口
@@ -29,7 +28,7 @@ const createWindow = () => {
     minHeight: 600,
     // 窗口图标。 在 Windows 上推荐使用 ICO 图标来获得最佳的视觉效果, 默认使用可执行文件的图标.
     // 在根目录中新建 build 文件夹存放图标等文件
-    icon: path.resolve(app.getAppPath(), "build", "icon.ico"),
+    icon: path.resolve(process.cwd(), "./build/icon/mainIcon.ico"),
     // 使用nodejs
     webPreferences: {
       sandbox: false,
@@ -43,36 +42,35 @@ const createWindow = () => {
   // 加载vue
   // 如果使用了 nginx 代理，url 改为代理地址
   mainWindow.loadURL("http://localhost:5173/");
-  //加载完毕后再显示
+
+  // 页面加载完毕后
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
-  });
-
-  //子窗口
-  secondaryWindow = new BrowserWindow({
-    width: 600,
-    height: 600,
-    parent: mainWindow, // 定义父窗口
-    modal: true // 锁定在主窗口
-  });
-  //加载页面
-
-  secondaryWindow.loadURL("http://www.baidu.com/");
-  //
-  secondaryWindow.on("closed", () => {
-    mainWindow = null;
+    //加载快捷键
+    globalShortcut.register('Alt+M', () => {
+      console.log('Alt+M 注册成功')
+    })
+    //加载主菜单
+    Menu.setApplicationMenu(mainMenu("传参测试",(args) => {
+      //获取回调
+      console.log(args)
+    }))
+    //加载右键菜单
+    mainWindow.webContents.on('context-menu',event => {
+      contextMenu().popup()
+    })
   });
 
   // 实例事件
-  webcontents = mainWindow.webContents
-    //页面加载完毕
-    webcontents.on('did-finish-load', () => {
-    })
-    // 右键点击时
-    wc.on('context-menu', (e, params) => {
-      // 注入js
-      // wc.executeJavaScript(`alert('${params.selectionText}')`)
-    })
+  webContents = mainWindow.webContents
+  //页面加载完毕
+  webContents.on('did-finish-load', () => {
+  })
+  // 右键点击时
+  webContents.on('context-menu', (e, params) => {
+    // 注入js
+    // wc.executeJavaScript(`alert('${params.selectionText}')`)
+  })
 };
 
 // 在应用准备就绪时调用函数
@@ -88,7 +86,7 @@ app.whenReady().then(() => {
 });
 
 //监听渲染进程
-ipcMain.handle("send-event", (event, msg) => {});
+ipcMain.handle("send-event", (event, msg) => { });
 
 // 除了 macOS 外，当所有窗口都被关闭的时候退出程序。 因此，通常对程序和它们在任务栏上的图标来说，应当保持活跃状态，直到用户使用 Cmd + Q 退出。
 app.on("window-all-closed", () => {

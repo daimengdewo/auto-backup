@@ -1,5 +1,5 @@
-import { contextBridge, ipcRenderer } from "electron";
+const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld("electron", {
-    ipcRenderer,
-});
+contextBridge.exposeInMainWorld('electronAPI', {
+    getFilePath: (path) => ipcRenderer.send('get-file-path', path)
+})

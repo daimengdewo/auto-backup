@@ -1,17 +1,15 @@
 <script setup>
-import {ref} from "vue";
-import {ipcRenderer} from "electron";
+import {ref} from "vue"
+import("./renderer.js")
 //input
 const inputValue = ref('')
-const send = () => {
-  ipcRenderer.send('msg',1);
-}
+
 </script>
 
 <template>
   <main>
-    <el-input v-model="inputValue" placeholder="请输入内容"></el-input>
-    <el-button type="primary" @click="send()">发送测试</el-button>
+    <el-input v-model="inputValue" placeholder="请输入内容" id="openFile"></el-input>
+    <el-button type="primary" id="btn">发送测试</el-button>
   </main>
 </template>
 

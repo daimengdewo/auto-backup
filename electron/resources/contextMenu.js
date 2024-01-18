@@ -5,7 +5,7 @@ const contextMenu = (args,callBack) => {
             label: 'Test',
             submenu: [
                 {
-                    label: 'Mount-Target', click: () => {
+                    label: 'Test', click: () => {
                         //消息弹窗
                         const answers = ['Yes', 'No', 'Maybe']
                         dialog.showMessageBox({

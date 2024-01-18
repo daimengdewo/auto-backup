@@ -34,8 +34,9 @@ const createWindow = () => {
     icon: path.resolve(process.cwd(), "./build/icon/auto.png"),
     // 使用nodejs
     webPreferences: {
-      sandbox: false,
-      preload: path.resolve(process.cwd(), "./preload.js"),
+      contextIsolation: false,
+      nodeIntegration: true,
+      preload: path.resolve(process.cwd(), "./src/preload.js"),
     },
   });
   // 开发环境下，打开开发者工具。

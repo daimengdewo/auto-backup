@@ -4,7 +4,8 @@ import axios from "axios";
 const useCounterStore = defineStore('counterStore', {
     state() {
         return {
-            dataList: []
+            dataList: [],
+            test: ""
         }
     },
     actions: {
@@ -26,4 +27,4 @@ const useCounterStore = defineStore('counterStore', {
     }
 })
 
-export default useCounterStore
+export const counterStore = useCounterStore

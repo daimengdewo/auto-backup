@@ -7,12 +7,11 @@ import contextMenu from "./resources/contextMenu.js";
 //托盘对象
 import createTray from "./resources/tray.js";
 
-
 // 是否是生产环境
 const isPackaged = app.isPackaged;
 
 // 主窗口
-let mainWindow;
+export let mainWindow;
 let webContents;
 
 const createWindow = () => {
@@ -20,21 +19,16 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     show: false,
     // 默认窗口标题，如果由loadURL()加载的HTML文件中含有标签<title>，此属性将被忽略。
-    title: "Electron + Vue3",
     width: 800,
     height: 600,
-    // 设置窗口尺寸为屏幕工作区尺寸
-    // width: screen.getPrimaryDisplay().workAreaSize.width,
-    // height: screen.getPrimaryDisplay().workAreaSize.height,
-    // 设置最小尺寸
-    minWidth: 800,
-    minHeight: 600,
+    //固定窗口大小
+    resizable: false,
     // 窗口图标。 在 Windows 上推荐使用 ICO 图标来获得最佳的视觉效果, 默认使用可执行文件的图标.
     // 在根目录中新建 build 文件夹存放图标等文件
     icon: path.resolve(process.cwd(), "./build/icon/auto.png"),
     // 预加载
     webPreferences: {
-      preload: path.join(process.cwd(), './src/preload.js')
+      preload: path.join(process.cwd(), "./electron/preload.js"),
     },
   });
   // 开发环境下，打开开发者工具。
@@ -48,34 +42,35 @@ const createWindow = () => {
   // 页面加载完毕后
   mainWindow.once("ready-to-show", () => {
     //创建托盘
-    createTray(app,mainWindow)
+    createTray(app, mainWindow);
     //加载快捷键
-    globalShortcut.register('Alt+M', () => {
-      console.log('Alt+M 注册成功')
-    })
+    globalShortcut.register("Alt+M", () => {
+      console.log("Alt+M 注册成功");
+    });
     //加载主菜单
-    Menu.setApplicationMenu(mainMenu("传参测试",(args) => {
-      //获取回调
-      console.log(args)
-    }))
+    Menu.setApplicationMenu(
+      mainMenu("传参测试", (args) => {
+        //获取回调
+        console.log(args);
+      }),
+    );
     //加载右键菜单
-    mainWindow.webContents.on('context-menu',event => {
-      contextMenu().popup()
-    })
+    mainWindow.webContents.on("context-menu", (event) => {
+      contextMenu().popup();
+    });
     //显示主窗口
     mainWindow.show();
   });
 
   // 实例事件
-  webContents = mainWindow.webContents
+  webContents = mainWindow.webContents;
   //页面加载完毕
-  webContents.on('did-finish-load', () => {
-  })
+  webContents.on("did-finish-load", () => {});
   // 右键点击时
-  webContents.on('context-menu', (e, params) => {
+  webContents.on("context-menu", (e, params) => {
     // 注入js
     // wc.executeJavaScript(`alert('${params.selectionText}')`)
-  })
+  });
 };
 
 // 在应用准备就绪时调用函数
@@ -90,9 +85,9 @@ app.whenReady().then(() => {
 });
 
 //监听渲染进程
-ipcMain.on('get-file-path', (event, args) => {
-  console.log(args)
-})
+ipcMain.on("get-file-path", (event, args) => {
+  console.log(args);
+});
 
 // 除了 macOS 外，当所有窗口都被关闭的时候退出程序。 因此，通常对程序和它们在任务栏上的图标来说，应当保持活跃状态，直到用户使用 Cmd + Q 退出。
 app.on("window-all-closed", () => {
@@ -107,6 +102,6 @@ if (!isPackaged) {
     function (event, webContents, url, error, certificate, callback) {
       event.preventDefault();
       callback(true);
-    }
+    },
   );
 }

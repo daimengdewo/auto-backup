@@ -28,6 +28,7 @@ const createWindow = () => {
     icon: path.resolve(process.cwd(), "./build/icon/auto.png"),
     // 预加载
     webPreferences: {
+      webSecurity: false,
       preload: path.join(process.cwd(), "./electron/preload.js"),
     },
   });
@@ -37,7 +38,7 @@ const createWindow = () => {
   }
   // 加载vue
   // 如果使用了 nginx 代理，url 改为代理地址
-  mainWindow.loadURL("http://localhost:5173/");
+  mainWindow.loadURL("http://localhost:5173/home");
 
   // 页面加载完毕后
   mainWindow.once("ready-to-show", () => {

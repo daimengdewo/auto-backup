@@ -22,18 +22,7 @@ const mainMenu = (args, callBack) => {
               modal: true,
             });
             //获取登录页面
-            loginWindow
-              .loadURL(
-                "https://openapi.baidu.com/oauth/2.0/authorize?" +
-                  "response_type=code" +
-                  "&client_id=DGxFsWGhyoBdmXS7SmnzAYrtRZwGzjKo" +
-                  "&redirect_uri=oob" +
-                  "&scope=basic,netdisk" +
-                  "&device_id=47439672" +
-                  "&display=popup" +
-                  "&state=test" +
-                  "&qrcode=1",
-              )
+            loginWindow.loadURL("http://localhost:5173/login")
               .catch(() => {
                 console.log("error");
               });

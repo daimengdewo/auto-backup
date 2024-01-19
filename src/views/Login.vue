@@ -1,22 +1,26 @@
 <script setup>
-import { ref } from "vue";
-import("@/script/renderer.js");
-//input
-const inputValue = ref("");
+import axios from 'axios';
+import {ref, onMounted} from "vue";
+//二维码地址
+const url = ref("")
+//钩子
+onMounted(() => {
+  axios.get('/baiduApi/oauth/2.0/device/code?' +
+      'response_type=device_code&' +
+      'client_id=DGxFsWGhyoBdmXS7SmnzAYrtRZwGzjKo&' +
+      'scope=basic,netdisk')
+      .then(res => {
+        url.value = res.data.qrcode_url.replace(/https:\/\/openapi.baidu.com/g, "/baiduApi");
+      })
+      .catch(err => {
+        console.error(err);
+      });
+})
 </script>
 
 <template>
-  <main>
-    <el-input
-      v-model="inputValue"
-      placeholder="请输入内容"
-      id="openFile"
-      class="input"
-    ></el-input>
-    <el-button type="primary" id="btn">发送测试</el-button>
-  </main>
+  <el-image style="width: 300px; height: 300px" :src="url" />
 </template>
 
-<style scoped lang="css" class="button">
-@import "@/css/app.css";
+<style scoped lang="css">
 </style>

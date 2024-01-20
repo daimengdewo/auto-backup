@@ -29,7 +29,7 @@ const createWindow = () => {
     // 预加载
     webPreferences: {
       webSecurity: false,
-      preload: path.join(process.cwd(), "./electron/preload.js"),
+      preload: path.join(process.cwd(), "./electron/preload/main-preload.js"),
     },
   });
   // 开发环境下，打开开发者工具。
@@ -61,16 +61,6 @@ const createWindow = () => {
     });
     //显示主窗口
     mainWindow.show();
-  });
-
-  // 实例事件
-  webContents = mainWindow.webContents;
-  //页面加载完毕
-  webContents.on("did-finish-load", () => {});
-  // 右键点击时
-  webContents.on("context-menu", (e, params) => {
-    // 注入js
-    // wc.executeJavaScript(`alert('${params.selectionText}')`)
   });
 };
 

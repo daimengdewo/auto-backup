@@ -8,14 +8,13 @@ const inputValue = ref("");
 <template>
   <div>
     <el-input
-        v-model="inputValue"
-        placeholder="请输入内容"
-        id="openFile"
-        class="input"
+      v-model="inputValue"
+      placeholder="请输入内容"
+      id="openFile"
+      class="input"
     ></el-input>
     <el-button type="primary" id="btn">发送测试</el-button>
   </div>
-  <router-view></router-view>
 </template>
 
 <style scoped lang="css" class="button">

@@ -1,6 +1,8 @@
 import { app, BrowserWindow, dialog, Menu, ipcMain } from "electron";
 import { mainWindow } from "../main.js";
+import { poll } from "../script/mainMenuScript.js";
 import axios from "axios";
+import path from "path";
 
 //主菜单
 const mainMenu = (args, callBack) => {
@@ -24,6 +26,13 @@ const mainMenu = (args, callBack) => {
               frame: false,
               //固定窗口大小
               resizable: false,
+              webPreferences: {
+                webSecurity: false,
+                preload: path.join(
+                  process.cwd(),
+                  "./electron/preload/main-preload.js",
+                ),
+              },
             });
             //打开开发者工具
             loginWindow.webContents.openDevTools();
@@ -32,30 +41,9 @@ const mainMenu = (args, callBack) => {
               console.log("error");
             });
             loginWindow.webContents.on("did-finish-load", () => {
-              const poll = async () => {
-                try {
-                  const response = await axios.get(
-                    "https://openapi.baidu.com/oauth/2.0/token?" +
-                      "grant_type=device_token" +
-                      "code=" +
-                      "&client_id=DGxFsWGhyoBdmXS7SmnzAYrtRZwGzjKo" +
-                      "&client_secret=KOGdaOwuK9bAgrxMO7lQ4LSDWtNGW0XZ",
-                  ); // 发送 GET 请求
-                  const data = response.data; // 获取返回的数据
-
-                  // 在这里对获取到的数据进行处理
-                  // ...
-
-                  setTimeout(poll, 5000); // 每隔 5 秒轮询一次
-                } catch (error) {
-                  console.error(error); // 处理请求出错的情况
-                }
-              };
-              //监听渲染进程
-              ipcMain.on("login-poll", (event, args) => {
-                console.log(args);
-                // 开始轮询
-                // poll().then((r) => {});
+              //等待渲染进程发起轮询
+              ipcMain.on("login-poll", (event, code) => {
+                poll(code).then((r) => {});
               });
             });
           },

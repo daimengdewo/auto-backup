@@ -19,6 +19,12 @@ export default defineConfig({
         // 将URL中的/api替换为空字符，如 /api/users 将被转发到 https://openapi.baidu.com/users
         rewrite: (path) => path.replace(/^\/baiduApi/, ""),
       },
+      "/panApi" : {
+        target:"https://pan.baidu.com",
+        changeOrigin: true,
+        // 将URL中的/api替换为空字符，如 /api/users 将被转发到 https://openapi.baidu.com/users
+        rewrite: (path) => path.replace(/^\/panApi/, ""),
+      },
     },
   },
   plugins: [

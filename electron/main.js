@@ -1,11 +1,14 @@
 // electron/main.js
-import { app, BrowserWindow, ipcMain, globalShortcut, Menu } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import path from "path";
-//菜单对象
+//主菜单
 import mainMenu from "./resources/mainMenu.js";
+//右键菜单
 import contextMenu from "./resources/contextMenu.js";
 //托盘对象
 import createTray from "./resources/tray.js";
+//引入token处理器
+import './script/tokenScript.js'
 
 // 是否是生产环境
 const isPackaged = app.isPackaged;
@@ -16,7 +19,7 @@ let webContents;
 
 const createWindow = () => {
   // 创建主窗口
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     show: false,
     // 默认窗口标题，如果由loadURL()加载的HTML文件中含有标签<title>，此属性将被忽略。
     width: 800,
@@ -29,7 +32,7 @@ const createWindow = () => {
     // 预加载
     webPreferences: {
       webSecurity: false,
-      preload: path.join(process.cwd(), "./electron/preload/main-preload.js"),
+      preload: path.join(process.cwd(), "./electron/preload/mainPreload.js"),
     },
   });
   // 开发环境下，打开开发者工具。
@@ -44,10 +47,6 @@ const createWindow = () => {
   mainWindow.once("ready-to-show", () => {
     //创建托盘
     createTray(app, mainWindow);
-    //加载快捷键
-    globalShortcut.register("Alt+M", () => {
-      console.log("Alt+M 注册成功");
-    });
     //加载主菜单
     Menu.setApplicationMenu(
       mainMenu("传参测试", (args) => {
@@ -73,11 +72,6 @@ app.whenReady().then(() => {
     // 打开的窗口，那么程序会重新创建一个窗口。
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-});
-
-//监听渲染进程
-ipcMain.on("get-file-path", (event, args) => {
-  console.log(args);
 });
 
 // 除了 macOS 外，当所有窗口都被关闭的时候退出程序。 因此，通常对程序和它们在任务栏上的图标来说，应当保持活跃状态，直到用户使用 Cmd + Q 退出。

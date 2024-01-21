@@ -61,6 +61,8 @@ onMounted(async () => {
       <el-table :data="dataList" style="width: 100%" height="250">
         <el-table-column fixed prop="username" label="用户名" width="150"/>
         <el-table-column prop="vip_type" label="会员等级" width="120"/>
+        <el-table-column prop="total" label="总空间" width="120"/>
+        <el-table-column prop="used" label="已使用空间" width="120"/>
       </el-table>
     </el-tab-pane>
     <el-tab-pane label="Config" name="second">Config</el-tab-pane>

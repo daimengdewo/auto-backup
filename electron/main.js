@@ -24,6 +24,8 @@ const createWindow = () => {
     // 默认窗口标题，如果由loadURL()加载的HTML文件中含有标签<title>，此属性将被忽略。
     width: 800,
     height: 600,
+    //背景
+    backgroundColor: '#181818',
     //固定窗口大小
     resizable: false,
     // 窗口图标。 在 Windows 上推荐使用 ICO 图标来获得最佳的视觉效果, 默认使用可执行文件的图标.

@@ -1,5 +1,12 @@
-{"setting":{"version":"0.0.1"},
+{
+  "setting":{
+  "version":"0.0.1"
+  },
   "data":{
-    "baiduToken":"126.36159a01a8758af75dc7b280df3d1759.YHT-j1EM77iOUlKVrnFc5yHczn82ApVHNmN_s5Q.AhOTQw",
-    "baiduTokenIsLive": true
-  }}
+    "baidu": {
+      "token":"126.36159a01a8758af75dc7b280df3d1759.YHT-j1EM77iOUlKVrnFc5yHczn82ApVHNmN_s5Q.AhOTQw",
+      "tokenIsLive": true
+    }
+  },
+  "resList": ["baidu"]
+}

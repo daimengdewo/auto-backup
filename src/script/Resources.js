@@ -38,10 +38,10 @@ export async function getResources() {
         data.username = userRes.data["baidu_name"];
         //总容量
         data.total =
-          (panRes.data["total"] / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+          (panRes.data["total"] / (1024 * 1024 * 1024)).toFixed(3) + "GB";
         //已用容量
         data.used =
-          (panRes.data["used"] / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+          (panRes.data["used"] / (1024 * 1024 * 1024)).toFixed(3) + "GB";
         //是否在线
         data.isLiveText = "在线";
         data.isLiveType = true;

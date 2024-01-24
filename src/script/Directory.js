@@ -28,7 +28,7 @@ export async function getDirectory(dirPath) {
             filename: item["server_filename"],
             local_ctime: formatDate(ctime),
             local_mtime: formatDate(mtime),
-            size: item["size"] + " KB",
+            size: (item["size"] / (1024 * 1024 * 1024)).toFixed(3) + "GB",
             path: item["path"],
           };
 

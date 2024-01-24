@@ -1,8 +1,8 @@
 import { app, BrowserWindow, dialog, Menu, ipcMain } from "electron";
-import { mainWindow } from "../main.js";
+import { mainWindow } from "../Main.js";
 import { poll } from "../script/BaiduLoginScript.js";
 import path from "path";
-import { BaiduTokenIsLive } from "../script/readFileScript.js";
+import { BaiduTokenIsLive } from "../script/ReadFileScript.js";
 
 //主菜单
 const mainMenu = (args, callBack) => {
@@ -48,7 +48,7 @@ const mainMenu = (args, callBack) => {
                     webSecurity: false,
                     preload: path.join(
                       process.cwd(),
-                      "./electron/preload/mainPreload.js",
+                      "./electron/preload/MainPreload.js",
                     ),
                   },
                 });

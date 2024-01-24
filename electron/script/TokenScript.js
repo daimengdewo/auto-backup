@@ -12,10 +12,15 @@ ipcMain.handle("get-token", (event, type) => {
   return config.data[type].token;
 });
 
+//设置token状态
 ipcMain.on("set-token-type", (event, type, isLive) => {
-  //设置token状态
   config.data[type].tokenIsLive = isLive;
   fs.writeFileSync(configPath, JSON.stringify(config));
+});
+
+//获取token状态
+ipcMain.handle("set-token-type", (event, type) => {
+  return config.data[type].tokenIsLive;
 });
 
 //获取配置文件中的资源列表

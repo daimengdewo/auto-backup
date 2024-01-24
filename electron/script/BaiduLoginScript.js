@@ -1,6 +1,6 @@
 import axios from "axios";
-import { setBaiduToken } from "./readFileScript.js";
-import {dialog} from "electron";
+import { setBaiduToken } from "./ReadFileScript.js";
+import { dialog } from "electron";
 
 //发起轮询等待用户登录
 export async function poll(code) {

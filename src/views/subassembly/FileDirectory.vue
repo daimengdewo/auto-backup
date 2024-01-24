@@ -1,6 +1,6 @@
 <script setup>
 import { getDirectory } from "@/script/Directory.js";
-import { FolderOpened } from "@element-plus/icons-vue";
+import { FolderOpened, ArrowLeft } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 
 //datalist
@@ -12,7 +12,7 @@ const loading = ref(false);
 //挂载结束时
 onMounted(async () => {
   //首次获取目录，用于初始化页面
-  getDirectory(path.value).then((list) => {
+  getDirectory(path.value,0,100).then((list) => {
     dataList.value = list.value;
   });
 });
@@ -27,12 +27,35 @@ const folderOpenClick = async (row) => {
   //重新设置当前目录
   path.value = row.path;
   //获取目录
-  getDirectory(path.value).then((list) => {
+  getDirectory(path.value,0,100).then((list) => {
     dataList.value = list.value;
     //设置加载状态为false
     loading.value = false;
   });
 };
+// 返回上一级按钮点击事件处理函数
+const goBack = () => {
+  path.value = processPath(path.value)
+  //设置加载状态为true
+  loading.value = true;
+  // 获取目录
+  getDirectory(path.value,0,100).then((list) => {
+    dataList.value = list.value;
+    // 设置加载状态为 false
+    loading.value = false;
+  });
+};
+//翻页逻辑
+
+//处理返回路径
+function processPath(str) {
+  if (str === '/' || str === '/xxx') {
+    return '/';
+  }
+  const segments = str.split('/').filter(segment => segment !== '');
+  const result = '/' + segments.slice(0, -1).join('/');
+  return result === '' ? '/' : result;
+}
 </script>
 
 <template>
@@ -41,6 +64,7 @@ const folderOpenClick = async (row) => {
     :data="dataList"
     :key="dataList"
     v-loading="loading"
+    class="el-table"
     style="width: 100%; height: 406px"
   >
     <el-table-column type="selection" width="55" />
@@ -74,15 +98,37 @@ const folderOpenClick = async (row) => {
           @click="folderOpenClick(row)"
           type="primary"
           :icon="FolderOpened"
+          :disabled="row.isdir"
           circle
         ></el-button>
       </template>
     </el-table-column>
   </el-table>
-  <div style="margin-top: 20px">
-    <el-button @click="">新增</el-button>
-    <el-button @click="">删除</el-button>
+  <div class="button-container">
+    <el-button @click="goBack" class="go-back" type="primary" :icon="ArrowLeft"></el-button>
+    <div class="button-group">
+      <el-button @click="">新增</el-button>
+      <el-button @click="">删除</el-button>
+    </div>
   </div>
 </template>
 
-<style scoped lang="css"></style>
+<style scoped lang="css">
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-group {
+  display: flex;
+  margin-right: 20px;
+}
+
+.go-back {
+  margin-left: 20px;
+}
+
+.el-table {
+  margin-bottom: 20px;
+}
+</style>

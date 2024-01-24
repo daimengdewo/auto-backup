@@ -19,7 +19,7 @@ ipcMain.on("set-token-type", (event, type, isLive) => {
 });
 
 //获取token状态
-ipcMain.handle("set-token-type", (event, type) => {
+ipcMain.handle("get-token-type", (event, type) => {
   return config.data[type].tokenIsLive;
 });
 

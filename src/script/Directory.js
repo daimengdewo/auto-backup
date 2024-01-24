@@ -1,14 +1,7 @@
 import axios from "axios";
 import { ref } from "vue";
-const list = ref([]);
 export async function getDirectory(dirPath) {
-  //数据组装
-  const data = {
-    filename: "",
-    local_ctime: "",
-    local_mtime: "",
-    size: "",
-  };
+  const list = ref([]);
   try {
     //获取资源列表
     let resList = await window.electronAPI.getResList();
@@ -26,14 +19,33 @@ export async function getDirectory(dirPath) {
             "&access_token=" +
             token,
         );
-        //组装数据
-        console.log(diRes);
+        //遍历
+        for (const item of diRes.data.list) {
+          const ctime = new Date(item["local_ctime"] * 1000);
+          const mtime = new Date(item["local_mtime"] * 1000);
+
+          const data = {
+            filename: item["server_filename"],
+            local_ctime: formatDate(ctime),
+            local_mtime: formatDate(mtime),
+            size: item["size"] + " KB",
+            path: item["path"],
+          };
+
+          list.value.push(data);
+        }
       }
     }
   } catch (error) {
     console.error(error);
   }
-
   // 在函数末尾返回 dataList
   return list;
+}
+
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }

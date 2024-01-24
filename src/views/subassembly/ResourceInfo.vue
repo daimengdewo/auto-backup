@@ -13,7 +13,9 @@ const getColor = (isLive) => {
   //返回颜色
   return isLive === true ? "green" : "red";
 };
+//挂载结束时
 onMounted(async () => {
+  //获取资源
   getResources().then((list) => {
     dataList.value = list.value;
   });

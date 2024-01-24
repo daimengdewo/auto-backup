@@ -8,7 +8,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   //获取资源列表
   getResList: async () => await ipcRenderer.invoke("get-res-list"),
   //获取token状态
-  getTokenType: async () => await ipcRenderer.invoke("get-token-type"),
+  getTokenType: async (type) =>
+    await ipcRenderer.invoke("get-token-type", type),
   //更新token状态
   setTokenType: (type, isLive) =>
     ipcRenderer.send("set-token-type", type, isLive),

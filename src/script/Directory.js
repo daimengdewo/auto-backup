@@ -56,7 +56,6 @@ export async function getDirectory(dirPath, start, limit, isClear) {
         info.has_more = diRes.data.has_more === 1;
         //下一页起点
         info.cursor = diRes.data.cursor;
-        console.log(diRes);
       } else {
         console.log("弹窗提示离线");
       }

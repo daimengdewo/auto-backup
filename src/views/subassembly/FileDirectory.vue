@@ -2,7 +2,7 @@
 import { getDirectory } from "@/script/Directory.js";
 import { FolderOpened, ArrowLeft } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
-import { createDirectory } from "@/script/DIrOperation.js";
+import { createDirectory, controlDirectory } from "@/script/DIrOperation.js";
 import { counterStore } from "@/store/counterStore.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 
@@ -18,6 +18,8 @@ const start = ref(0);
 const limit = ref(20);
 //是否还有下一页
 const hasMore = ref(false);
+//被选中行路径
+const paths = ref([])
 //挂载结束时
 onMounted(async () => {
   //读取配置
@@ -71,8 +73,6 @@ const load = (event) => {
   ) {
     //设置加载状态为true
     loading.value = true;
-    //翻页
-    console.log(start.value);
     // 获取目录
     getDirectory(path.value, start.value, limit.value, false).then((info) => {
       dataList.value = info["list"].value;
@@ -123,6 +123,44 @@ const open = () => {
       });
     });
 };
+//弹窗确认删除
+const del = () => {
+  ElMessageBox.confirm("确认删除被选中目录吗？", "提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消"
+  })
+      .then(() => {
+        //设置加载状态为true
+        loading.value = true;
+        console.log(paths.value)
+        //操作目录
+        controlDirectory("baidu","delete", paths.value).then((res) => {
+          if (res.data["errno"] === 0) {
+            ElMessage({
+              type: "success",
+              message: "目录删除成功",
+            });
+          } else {
+            ElMessage({
+              type: "error",
+              message: "目录删除失败",
+            });
+          }
+          //设置加载状态为false
+          loading.value = false;
+        });
+      })
+      .catch(() => {
+        ElMessage({
+          type: "error",
+          message: "删除失败或操作已被取消",
+        });
+      });
+};
+// 取出每行的path属性
+function handleSelectionChange(selection) {
+  paths.value = selection.map((item) => '"' + item.path + '"');
+}
 //处理返回路径
 function processPath(str) {
   if (str === "/" || str === "/xxx") {
@@ -144,6 +182,7 @@ function processPath(str) {
     style="width: 100%"
     height="406"
     @scroll.capture="load($event)"
+    @selection-change="handleSelectionChange"
   >
     <el-table-column type="selection" width="55" />
     <el-table-column
@@ -191,7 +230,7 @@ function processPath(str) {
     ></el-button>
     <div class="button-group">
       <el-button type="primary" @click="open">新增目录</el-button>
-      <el-button type="primary" @click="">删除</el-button>
+      <el-button type="primary" @click="del">删除</el-button>
     </div>
   </div>
 </template>

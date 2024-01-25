@@ -28,7 +28,7 @@ export async function createDirectory(resourceType, path, name) {
   }
 }
 
-export async function deleteDirectory(resourceType, path, name, opera, del) {
+export async function controlDirectory(resourceType, opera, del) {
   //判断当前标签
   switch (resourceType) {
     case "baidu":
@@ -37,12 +37,6 @@ export async function deleteDirectory(resourceType, path, name, opera, del) {
       if (tokenType) {
         //获取token
         let token = counterStore().baiduToken;
-        //路径处理
-        if (path === "/") {
-          path = path + name;
-        } else {
-          path = path + "/" + name;
-        }
         //新建目录
         return await axios.post(
           "/panApi/rest/2.0/xpan/file?" +
@@ -51,7 +45,7 @@ export async function deleteDirectory(resourceType, path, name, opera, del) {
             token +
             "&opera=" +
             opera,
-          "async=1&filelist=" + del,
+          "async=1&filelist=[" + del + "]",
         );
       }
   }

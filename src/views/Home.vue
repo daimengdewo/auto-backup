@@ -16,8 +16,7 @@ const activeName = ref("first");
       <!-- 目录管理子组件 -->
       <DirManager></DirManager>
     </el-tab-pane>
-    <el-tab-pane label="Role" name="third">Role</el-tab-pane>
-    <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
+    <el-tab-pane label="全局配置" name="third">全局配置</el-tab-pane>
   </el-tabs>
 </template>
 

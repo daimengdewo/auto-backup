@@ -1,25 +1,39 @@
 import axios from "axios";
 import { ref } from "vue";
-export async function getDirectory(dirPath, start, limit) {
-  const list = ref([]);
+import { counterStore } from "@/store/counterStore.js";
+
+const list = ref([]);
+const info = {
+  list: list,
+  has_more: 0,
+  cursor: 0,
+};
+export async function getDirectory(dirPath, start, limit, isClear) {
+  if (isClear) {
+    list.value = [];
+  }
   try {
     //获取资源列表
-    let resList = await window.electronAPI.getResList();
+    let resList = counterStore().resList;
     //判断列表里是否有百度网盘
     if (resList.includes("baidu")) {
       //判断token是否存活
-      let tokenType = await window.electronAPI.getTokenType("baidu");
+      let tokenType = counterStore().baiduTokenType;
       if (tokenType) {
         //获取token
-        let token = await window.electronAPI.getToken("baidu");
+        let token = counterStore().baiduToken;
         //获取文件目录
         const diRes = await axios.get(
           "/panApi/rest/2.0/xpan/multimedia?" +
             "method=listall&" +
-            "path=" + dirPath +
-            "&access_token=" + token +
-            "&start=" + start +
-            "&limit=" + limit
+            "path=" +
+            dirPath +
+            "&access_token=" +
+            token +
+            "&start=" +
+            start +
+            "&limit=" +
+            limit,
         );
         //遍历
         for (const item of diRes.data.list) {
@@ -34,18 +48,26 @@ export async function getDirectory(dirPath, start, limit) {
             path: item["path"],
             //判断是否为目录
             isdir: item["isdir"] === 0,
-            has_more: diRes.data.has_more
           };
-
+          //填充
           list.value.push(data);
         }
+        //是否还有下一页
+        info.has_more = diRes.data.has_more === 1;
+        //下一页起点
+        info.cursor = diRes.data.cursor;
+        console.log(diRes);
+      } else {
+        console.log("弹窗提示离线");
       }
     }
   } catch (error) {
     console.error(error);
   }
+  //填充
+  info.list = list;
   // 在函数末尾返回 dataList
-  return list;
+  return info;
 }
 
 function formatDate(date) {

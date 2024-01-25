@@ -2,6 +2,9 @@
 import { getDirectory } from "@/script/Directory.js";
 import { FolderOpened, ArrowLeft } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
+import { createDirectory } from "@/script/DIrOperation.js";
+import { counterStore } from "@/store/counterStore.js";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 //datalist
 const dataList = ref([]);
@@ -9,16 +12,24 @@ const dataList = ref([]);
 const path = ref("/");
 //加载状态
 const loading = ref(false);
-//页码
-const pages = ref(0);
+//临时页码
+const start = ref(0);
+//行数
+const limit = ref(20);
+//是否还有下一页
+const hasMore = ref(false);
 //挂载结束时
 onMounted(async () => {
+  //读取配置
+  await counterStore().loadData();
   //首次获取目录，用于初始化页面
-  getDirectory(path.value, 0, 10).then((list) => {
-    dataList.value = list.value;
+  getDirectory(path.value, 0, limit.value, true).then((info) => {
+    dataList.value = info["list"].value;
+    hasMore.value = info["has_more"];
+    start.value = info["cursor"];
   });
 });
-// 点击事件处理函数
+// 打开目录
 const folderOpenClick = async (row) => {
   //相同不执行
   if (path.value === row.path) {
@@ -29,8 +40,10 @@ const folderOpenClick = async (row) => {
   //重新设置当前目录
   path.value = row.path;
   //获取目录
-  getDirectory(path.value, 0, 10).then((list) => {
-    dataList.value = list.value;
+  getDirectory(path.value, 0, limit.value, true).then((info) => {
+    dataList.value = info["list"].value;
+    hasMore.value = info["has_more"];
+    start.value = info["cursor"];
     //设置加载状态为false
     loading.value = false;
   });
@@ -41,16 +54,74 @@ const goBack = () => {
   //设置加载状态为true
   loading.value = true;
   // 获取目录
-  getDirectory(path.value, 0, 10).then((list) => {
-    dataList.value = list.value;
+  getDirectory(path.value, 0, limit.value, true).then((info) => {
+    dataList.value = info["list"].value;
+    hasMore.value = info["has_more"];
+    start.value = info["cursor"];
     // 设置加载状态为 false
     loading.value = false;
   });
 };
 //加载
 const load = (event) => {
-  pages.value += 1;
-  console.log(event.target.scrollTop);
+  if (
+    event.target.scrollTop + event.target.clientHeight >=
+      event.target.scrollHeight &&
+    hasMore.value === true
+  ) {
+    //设置加载状态为true
+    loading.value = true;
+    //翻页
+    console.log(start.value);
+    // 获取目录
+    getDirectory(path.value, start.value, limit.value, false).then((info) => {
+      dataList.value = info["list"].value;
+      hasMore.value = info["has_more"];
+      start.value = info["cursor"];
+      // 设置加载状态为 false
+      loading.value = false;
+    });
+  }
+};
+//创建目录
+const folderCreateClick = async (newFolderName) => {
+  //设置加载状态为true
+  loading.value = true;
+  //获取目录
+  createDirectory("baidu", path.value, newFolderName).then((res) => {
+    if (res.data["errno"] === 0) {
+      ElMessage({
+        type: "success",
+        message: "目录创建成功",
+      });
+    } else {
+      ElMessage({
+        type: "error",
+        message: "目录创建失败",
+      });
+    }
+    //设置加载状态为false
+    loading.value = false;
+  });
+};
+//弹窗输入name
+const open = () => {
+  ElMessageBox.prompt("请输入你要使用的目录名称", "提示", {
+    confirmButtonText: "创建",
+    cancelButtonText: "取消",
+    inputPattern: /^[^"*<>?\\|/:]+$/,
+    inputErrorMessage: "输入不正确",
+  })
+    .then(({ value }) => {
+      //创建新目录
+      folderCreateClick(value);
+    })
+    .catch(() => {
+      ElMessage({
+        type: "error",
+        message: "目录名称异常或操作已被取消",
+      });
+    });
 };
 //处理返回路径
 function processPath(str) {
@@ -119,8 +190,8 @@ function processPath(str) {
       :icon="ArrowLeft"
     ></el-button>
     <div class="button-group">
-      <el-button @click="">新增</el-button>
-      <el-button @click="">删除</el-button>
+      <el-button type="primary" @click="open">新增目录</el-button>
+      <el-button type="primary" @click="">删除</el-button>
     </div>
   </div>
 </template>

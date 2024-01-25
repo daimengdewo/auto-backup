@@ -132,7 +132,6 @@ const del = () => {
       .then(() => {
         //设置加载状态为true
         loading.value = true;
-        console.log(paths.value)
         //操作目录
         controlDirectory("baidu","delete", paths.value).then((res) => {
           if (res.data["errno"] === 0) {

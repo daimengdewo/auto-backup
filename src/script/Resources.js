@@ -2,6 +2,10 @@ import axios from "axios";
 import { ref } from "vue";
 const list = ref([]);
 export async function getResources() {
+  //非初始化
+  if (list.value.length > 0) {
+    return;
+  }
   //数据组装
   const data = {
     type: "百度网盘",

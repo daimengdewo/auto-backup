@@ -14,9 +14,9 @@ const tabPosition = ref("left");
     <el-tab-pane label="百度网盘">
       <FileDirectory></FileDirectory>
     </el-tab-pane>
-    <el-tab-pane label="预留">Config</el-tab-pane>
-    <el-tab-pane label="预留">Role</el-tab-pane>
-    <el-tab-pane label="预留">Task</el-tab-pane>
+    <el-tab-pane label="阿里云盘">阿里云盘</el-tab-pane>
+    <el-tab-pane label="腾讯微云">腾讯微云</el-tab-pane>
+    <el-tab-pane label="迅雷云盘">迅雷云盘</el-tab-pane>
   </el-tabs>
 </template>
 

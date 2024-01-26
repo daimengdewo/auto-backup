@@ -7,6 +7,7 @@ const useCounterStore = defineStore("counterStore", {
       resList: [],
       baiduToken: "",
       baiduTokenType: true,
+      resourcePath: [],
     };
   },
   actions: {

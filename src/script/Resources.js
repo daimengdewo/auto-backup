@@ -2,13 +2,10 @@ import axios from "axios";
 import { ref } from "vue";
 const list = ref([]);
 export async function getResources() {
-  //非初始化
-  if (list.value.length > 0) {
-    return;
-  }
   //数据组装
   const data = {
     type: "百度网盘",
+    typeTag: "baidu",
     username: "未知",
     total: "未知",
     used: "未知",
@@ -49,8 +46,14 @@ export async function getResources() {
         //是否在线
         data.isLiveText = "在线";
         data.isLiveType = true;
-        //填充进去
-        list.value.push(data);
+        //组装
+        if (list.value.length > 0) {
+          //直接覆盖
+          list.value[0] = data;
+        } else {
+          //没有就填充
+          list.value.push(data);
+        }
       } else {
         window.electronAPI.setTokenType("baidu", false);
       }

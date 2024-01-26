@@ -1,6 +1,7 @@
 <script setup>
-import { reactive, ref, onMounted } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { getResources } from "@/script/Resources.js";
+import { CirclePlusFilled, RemoveFilled } from "@element-plus/icons-vue";
 
 const dataList = ref([]);
 //isLiveType
@@ -9,6 +10,10 @@ const isLiveType = ref(false);
 const form = reactive({
   source: "",
   target: "",
+  isCompress: true,
+  date1: "",
+  date2: "",
+  type: "",
 });
 const formList = ref([]); // 保存el-form的数组
 const addForm = () => {
@@ -19,6 +24,13 @@ const deleteForm = () => {
 };
 //弹窗可见
 const dialogFormVisible = ref(false);
+//自定义配置
+const custom = (row) => {
+  dialogFormVisible.value = true;
+  form.type = row.typeTag;
+};
+//保存计划任务
+const setPlan = () => {};
 // 获取资源颜色
 const getColor = (isLive) => {
   //当前isLiveType
@@ -31,7 +43,6 @@ onMounted(async () => {
   //获取资源
   getResources().then((list) => {
     dataList.value = list.value;
-    console.log(list);
   });
 });
 const login = (row) => {
@@ -85,7 +96,7 @@ const login = (row) => {
           </el-button>
           <el-button
             type="primary"
-            @click="dialogFormVisible = true"
+            @click="custom(row)"
             style="margin-left: 10px"
           >
             自定义配置
@@ -95,37 +106,74 @@ const login = (row) => {
     </el-table-column>
   </el-table>
   <!-- 表单 -->
-  <el-dialog v-model="dialogFormVisible" title="自定义配置">
+  <el-dialog v-model="dialogFormVisible" title="自定义配置" width="420px">
     <el-card shadow="hover">
       <el-form :model="form" v-for="(item, index) in formList" :key="index">
-        <el-form-item
-          label="来源路径"
-          :label-width="80"
-          style="margin-top: 20px"
-        >
+        <el-form-item label="来源路径" :label-width="80">
           <div style="display: flex; align-items: center">
-            <el-input v-model="form.source" autocomplete="off" />
-            <el-button type="primary" @click="" style="margin-left: 10px">
-              选择
-            </el-button>
+            <el-input
+              v-model="form.source"
+              autocomplete="off"
+              style="width: 246px"
+            />
+            <!--            <el-button type="primary" @click="getDir" style="margin-left: 10px">-->
+            <!--              选择-->
+            <!--            </el-button>-->
           </div>
         </el-form-item>
-        <el-form-item
-          label="目标路径"
-          :label-width="80"
-          style="margin-bottom: 20px"
-        >
+        <el-form-item label="目标路径" :label-width="80">
           <div style="display: flex; align-items: center">
-            <el-input v-model="form.source" autocomplete="off" />
-            <el-button type="primary" @click="" style="margin-left: 10px">
-              选择
-            </el-button>
+            <el-input
+              v-model="form.target"
+              autocomplete="off"
+              style="width: 246px"
+            />
+            <!--            <el-button type="primary" @click="" style="margin-left: 10px">-->
+            <!--              选择-->
+            <!--            </el-button>-->
           </div>
         </el-form-item>
+        <el-form-item label="备份时间" style="margin-left: 12px">
+          <el-col :span="11">
+            <el-form-item prop="date1">
+              <el-date-picker
+                v-model="form.date1"
+                type="date"
+                placeholder="请选择日期"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col class="text-center" :span="1"> </el-col>
+          <el-col :span="11">
+            <el-form-item prop="date2">
+              <el-time-picker
+                v-model="form.date2"
+                placeholder="请选择时间"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+        <el-form-item
+          label="是否启用自动压缩："
+          prop="delivery"
+          :label-width="140"
+          style="margin-left: 10px"
+        >
+          <el-switch v-model="form.isCompress" />
+        </el-form-item>
+        <!-- 添加分割线 -->
+        <div class="divider"></div>
       </el-form>
-      <div>
-        <el-button icon="el-icon-plus" @click="addForm">添加表单</el-button>
-        <el-button icon="el-icon-minus" @click="deleteForm">删除表单</el-button>
+      <!-- 增减计划 -->
+      <div style="display: flex; justify-content: center">
+        <el-button @click="addForm" type="primary" :icon="CirclePlusFilled">
+          新增备份计划
+        </el-button>
+        <el-button @click="deleteForm" type="primary" :icon="RemoveFilled">
+          移除备份计划
+        </el-button>
       </div>
     </el-card>
     <template #footer>
@@ -145,5 +193,12 @@ const login = (row) => {
 }
 .dialog-footer {
   margin-right: 15px;
+}
+
+.divider {
+  margin: 20px auto;
+  height: 1px;
+  width: 100%;
+  background-color: #e0e0e0; /* 设置为灰色 */
 }
 </style>

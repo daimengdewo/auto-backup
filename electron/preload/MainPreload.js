@@ -13,4 +13,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
   //更新token状态
   setTokenType: (type, isLive) =>
     ipcRenderer.send("set-token-type", type, isLive),
+  //获取路径
+  getDirPath: async () => await ipcRenderer.send("get-dir-path"),
+  waitPath: async () =>
+    await ipcRenderer.on("dir-path-selected", (event, filePaths) => {
+      // 在这里处理接收到的文件路径
+      console.log("Received file paths:", filePaths);
+    }),
 });

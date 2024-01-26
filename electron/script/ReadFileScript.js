@@ -30,3 +30,10 @@ ipcMain.on("get-dir-path", (event) => {
       event.reply("dir-path-selected", result.filePaths);
     });
 });
+
+//保存备份计划任务配置
+ipcMain.on("set-plan", (event, formJson) => {
+    let formData = JSON.parse(formJson);
+    config.plans.push(formData)
+    fs.writeFileSync(configPath, JSON.stringify(config));
+});

@@ -1,5 +1,7 @@
 import axios from "axios";
 import { counterStore } from "@/store/counterStore.js";
+import { copy } from 'clipboard';
+import {ElMessage} from "element-plus";
 
 export async function createDirectory(resourceType, path, name) {
   //判断当前标签
@@ -48,5 +50,20 @@ export async function controlDirectory(resourceType, opera, del) {
           "async=1&filelist=[" + del + "]",
         );
       }
+  }
+}
+
+export async function copyToClipboard(text){
+  try {
+    copy(text);
+    ElMessage({
+      type: "success",
+      message: "路径复制成功",
+    });
+  } catch (error) {
+    ElMessage({
+      type: "error",
+      message: "路径复制失败",
+    });
   }
 }

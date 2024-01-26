@@ -1,8 +1,8 @@
 <script setup>
 import { getDirectory } from "@/script/Directory.js";
-import { FolderOpened, ArrowLeft } from "@element-plus/icons-vue";
+import { FolderOpened, ArrowLeft , DocumentCopy } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
-import { createDirectory, controlDirectory } from "@/script/DIrOperation.js";
+import { createDirectory, controlDirectory, copyToClipboard } from "@/script/DIrOperation.js";
 import { counterStore } from "@/store/counterStore.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 
@@ -208,7 +208,7 @@ function processPath(str) {
       align="center"
       width="100"
     />
-    <el-table-column label="打开目录" align="center" show-overflow-tooltip>
+    <el-table-column label="可用操作" align="center" show-overflow-tooltip>
       <template #default="{ row }">
         <el-button
           @click="folderOpenClick(row)"
@@ -216,6 +216,12 @@ function processPath(str) {
           :icon="FolderOpened"
           :disabled="row.isdir"
           circle
+        ></el-button>
+        <el-button
+            @click="copyToClipboard(row.path)"
+            type="primary"
+            :icon="DocumentCopy"
+            circle
         ></el-button>
       </template>
     </el-table-column>

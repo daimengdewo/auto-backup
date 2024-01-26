@@ -20,4 +20,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
       // 在这里处理接收到的文件路径
       console.log("Received file paths:", filePaths);
     }),
+  //保存备份计划任务配置
+  setPlan: (formJson) => ipcRenderer.send("set-plan", formJson)
 });

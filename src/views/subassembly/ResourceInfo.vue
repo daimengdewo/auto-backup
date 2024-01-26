@@ -24,13 +24,17 @@ const deleteForm = () => {
 };
 //弹窗可见
 const dialogFormVisible = ref(false);
-//自定义配置
+//打开自定义配置窗口
 const custom = (row) => {
   dialogFormVisible.value = true;
   form.type = row.typeTag;
 };
 //保存计划任务
-const setPlan = () => {};
+const setPlan = async () => {
+  dialogFormVisible.value = false;
+  let formJson =JSON.stringify(form);
+  window.electronAPI.setPlan(formJson)
+};
 // 获取资源颜色
 const getColor = (isLive) => {
   //当前isLiveType
@@ -179,7 +183,7 @@ const login = (row) => {
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">
+        <el-button type="primary" @click="setPlan">
           确定
         </el-button>
       </span>

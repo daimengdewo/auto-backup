@@ -14,7 +14,6 @@ const isPackaged = app.isPackaged;
 
 // 主窗口
 export let mainWindow;
-let webContents;
 
 const createWindow = () => {
   // 创建主窗口
@@ -34,10 +33,10 @@ const createWindow = () => {
       preload: path.join(process.cwd(), "./electron/preload/MainPreload.js"),
     },
   });
-  // 开发环境下，打开开发者工具。
-  if (!isPackaged) {
-    mainWindow.webContents.openDevTools();
-  }
+
+  //打开开发者工具
+  mainWindow.webContents.openDevTools();
+
   // 加载vue
   // 如果使用了 nginx 代理，url 改为代理地址
   mainWindow.loadURL("http://localhost:5173/home");
@@ -53,10 +52,10 @@ const createWindow = () => {
         console.log(args);
       }),
     );
-    //加载右键菜单
-    mainWindow.webContents.on("context-menu", (event) => {
-      contextMenu().popup();
-    });
+    // //加载右键菜单
+    // mainWindow.webContents.on("context-menu", (event) => {
+    //   contextMenu().popup();
+    // });
     //显示主窗口
     mainWindow.show();
   });

@@ -21,5 +21,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
       console.log("Received file paths:", filePaths);
     }),
   //保存备份计划任务配置
-  setPlan: (formJson) => ipcRenderer.send("set-plan", formJson)
+  setPlan: (formJson) => ipcRenderer.send("set-plan", formJson),
+  //读取计划任务
+  getPlan: (formJson) => ipcRenderer.invoke("get-plan")
 });

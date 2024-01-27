@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { getResources } from "@/script/Resources.js";
+import {getPlans, getResources} from "@/script/Resources.js";
 import { CirclePlusFilled, RemoveFilled } from "@element-plus/icons-vue";
 
 //data
@@ -18,7 +18,15 @@ const form = reactive({
 });
 const formList = ref([]); // 保存el-form的数组
 const addForm = () => {
-  formList.value.push({}); // 添加一个空对象到formList中
+  const form2 = reactive({
+    source: "",
+    target: "",
+    isCompress: true,
+    date1: "",
+    date2: "",
+    type: form.type,
+  });
+  formList.value.push(form2); // 添加一个空对象到formList中
 };
 const deleteForm = () => {
   formList.value.pop(); // 删除formList中的最后一个元素
@@ -33,7 +41,7 @@ const custom = (row) => {
 //保存计划任务
 const setPlan = async () => {
   dialogFormVisible.value = false;
-  let formJson =JSON.stringify(form);
+  let formJson =JSON.stringify(formList.value);
   window.electronAPI.setPlan(formJson)
 };
 // 获取资源颜色
@@ -49,6 +57,10 @@ onMounted(async () => {
   getResources().then((list) => {
     dataList.value = list.value;
   });
+  //读取计划任务
+  getPlans().then((plans) => {
+    formList.value = plans;
+  })
 });
 const login = (row) => {
   // 处理登录逻辑
@@ -117,7 +129,7 @@ const login = (row) => {
         <el-form-item label="来源路径" :label-width="80">
           <div style="display: flex; align-items: center">
             <el-input
-              v-model="form.source"
+              v-model="item.source"
               autocomplete="off"
               style="width: 246px"
             />
@@ -129,7 +141,7 @@ const login = (row) => {
         <el-form-item label="目标路径" :label-width="80">
           <div style="display: flex; align-items: center">
             <el-input
-              v-model="form.target"
+              v-model="item.target"
               autocomplete="off"
               style="width: 246px"
             />
@@ -142,7 +154,7 @@ const login = (row) => {
           <el-col :span="11">
             <el-form-item prop="date1">
               <el-date-picker
-                v-model="form.date1"
+                v-model="item.date1"
                 type="date"
                 placeholder="请选择日期"
                 style="width: 100%"
@@ -153,7 +165,7 @@ const login = (row) => {
           <el-col :span="11">
             <el-form-item prop="date2">
               <el-time-picker
-                v-model="form.date2"
+                v-model="item.date2"
                 placeholder="请选择时间"
                 style="width: 100%"
               />
@@ -166,7 +178,7 @@ const login = (row) => {
           :label-width="140"
           style="margin-left: 10px"
         >
-          <el-switch v-model="form.isCompress" />
+          <el-switch v-model="item.isCompress" />
         </el-form-item>
         <!-- 添加分割线 -->
         <div class="divider"></div>

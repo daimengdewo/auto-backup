@@ -1,5 +1,6 @@
 import axios from "axios";
-import { ref } from "vue";
+import {ref} from "vue";
+
 const list = ref([]);
 export async function getResources() {
   //数据组装
@@ -64,4 +65,9 @@ export async function getResources() {
 
   // 在函数末尾返回 dataList
   return list;
+}
+
+//读取计划任务
+export async function getPlans(){
+  return window.electronAPI.getPlan()
 }

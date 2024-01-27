@@ -1,4 +1,4 @@
-import { app, dialog, ipcMain } from "electron";
+import {app, dialog, ipcMain} from "electron";
 import fs from "fs";
 import path from "path";
 
@@ -33,7 +33,11 @@ ipcMain.on("get-dir-path", (event) => {
 
 //保存备份计划任务配置
 ipcMain.on("set-plan", (event, formJson) => {
-    let formData = JSON.parse(formJson);
-    config.plans.push(formData)
+    config.plans =JSON.parse(formJson)
     fs.writeFileSync(configPath, JSON.stringify(config));
+});
+
+//读取计划任务
+ipcMain.handle("get-plan", () => {
+    return config.plans;
 });

@@ -3,6 +3,7 @@ import { onMounted, reactive, ref } from "vue";
 import { getResources } from "@/script/Resources.js";
 import { CirclePlusFilled, RemoveFilled } from "@element-plus/icons-vue";
 
+//data
 const dataList = ref([]);
 //isLiveType
 const isLiveType = ref(false);

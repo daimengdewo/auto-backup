@@ -12,8 +12,7 @@ const form = reactive({
   source: "",
   target: "",
   isCompress: true,
-  date1: "",
-  date2: "",
+  date: "",
   type: "",
 });
 const formList = ref([]); // 保存el-form的数组
@@ -22,8 +21,7 @@ const addForm = () => {
     source: "",
     target: "",
     isCompress: true,
-    date1: "",
-    date2: "",
+    date: "",
     type: form.type,
   });
   formList.value.push(form2); // 添加一个空对象到formList中
@@ -152,20 +150,9 @@ const login = (row) => {
         </el-form-item>
         <el-form-item label="备份时间" style="margin-left: 12px">
           <el-col :span="11">
-            <el-form-item prop="date1">
-              <el-date-picker
-                v-model="item.date1"
-                type="date"
-                placeholder="请选择日期"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col class="text-center" :span="1"> </el-col>
-          <el-col :span="11">
-            <el-form-item prop="date2">
+            <el-form-item prop="date">
               <el-time-picker
-                v-model="item.date2"
+                v-model="item.date"
                 placeholder="请选择时间"
                 style="width: 100%"
               />

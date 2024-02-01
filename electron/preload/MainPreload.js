@@ -23,5 +23,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   //保存备份计划任务配置
   setPlan: (formJson) => ipcRenderer.send("set-plan", formJson),
   //读取计划任务
-  getPlan: (formJson) => ipcRenderer.invoke("get-plan")
+  getPlan: (formJson) => ipcRenderer.invoke("get-plan"),
+  //压缩文件并分片
+  toCompress: () => ipcRenderer.invoke("to-compress"),
 });

@@ -1,5 +1,6 @@
 import { app, dialog, ipcMain } from "electron";
-import zlib from "zlib";
+import schedule from "node-schedule"
+import cron from "node-cron"
 import fs from "fs";
 import path from "path";
 import archiver from "archiver";
@@ -103,28 +104,34 @@ async function compressDirOrFile(path) {
 }
 
 // 定时执行方法
-function scheduleCompress(sourcePath, interval) {
-  // 首次立即执行一次
-  compressDirOrFile(sourcePath).then((r) => {});
+function scheduleCompress(source,date) {
+  try { // 首次立即执行一次
+    compressDirOrFile(source).then(() => {
+    });
 
-  // 设置定时器，每隔一定时间执行一次
-  setInterval(() => {
-    compressDirOrFile(sourcePath).then((r) => {});
-  }, interval);
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
+
+    const cronExpression = `${second} ${minute} ${hour} * * *`;
+
+    // 创建一个定时任务，指定要执行的操作
+    schedule.scheduleJob(cronExpression, function () {
+      // 在指定时间执行的任务
+      compressDirOrFile(source).then(() => {
+      });
+    });
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 // 调用
 config.plans.forEach((plan) => {
   const date = new Date(plan.date);
-
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  const seconds = date.getUTCSeconds();
-
-  const newDate = new Date(hours, minutes, seconds);
   const source = plan.source;
 
   // 调用 scheduleCompress 函数，并传入新的时间和 source
-  scheduleCompress(source,24 * 60 * 60 * 1000);
-  console.log(`调度压缩任务，时间：${newDate}, 源文件：${source}`);
+  scheduleCompress(source,date);
+  console.log(`调度压缩任务，时间：${date}, 源文件：${source}`);
 });

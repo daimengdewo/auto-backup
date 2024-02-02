@@ -103,10 +103,53 @@ async function compressDirOrFile(path) {
   });
 }
 
+// 将文件处理为分片的文件
+function splitFile(sourcePath, chunkSize) {
+
+  const backupPath = `${sourcePath}/backs`;
+
+  sourcePath = `${backupPath}/${sourcePath.split('/').pop()}.zip`;
+
+  // 打开源文件
+  const readStream = fs.createReadStream(sourcePath);
+
+  let index = 0;
+  let currentWriteStream;
+
+  readStream.on('data', (chunk) => {
+    if (!currentWriteStream || currentWriteStream.bytesWritten + chunk.length >= chunkSize) {
+      // 创建新的写入流，并关闭旧的（如果存在）
+      if (currentWriteStream) {
+        currentWriteStream.end();
+      }
+      const filename = `part-${index++}`;
+      const targetPath = path.join(backupPath, filename);
+      currentWriteStream = fs.createWriteStream(targetPath);
+    }
+
+    // 将数据写入当前的写入流
+    currentWriteStream.write(chunk);
+  });
+
+  readStream.on('end', () => {
+    if (currentWriteStream) {
+      currentWriteStream.end(); // 关闭最后一个写入流
+    }
+  });
+
+  readStream.on('error', (err) => {
+    console.error(`Error reading file: ${err}`);
+  });
+}
+
+
 // 定时执行方法
 function scheduleCompress(source,date) {
-  try { // 首次立即执行一次
+  try {
+    // 首次立即执行一次
     compressDirOrFile(source).then(() => {
+      // 分片为4Mb
+      splitFile(source, 4 * 1024 * 1024);
     });
 
     const hour = date.getHours();
@@ -119,6 +162,8 @@ function scheduleCompress(source,date) {
     schedule.scheduleJob(cronExpression, function () {
       // 在指定时间执行的任务
       compressDirOrFile(source).then(() => {
+        // 分片为4Mb
+        splitFile(source, 4 * 1024 * 1024);
       });
     });
   } catch (e) {
